@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Movie Watchlist</title>
+<!-- Google Fonts -->
+<link href="style.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+<header>CineList</header>
+<div class="subtitle">Add movies with title and image link - keep track easily!</div>
+
+<div class="input-section" aria-label="Add movie to watchlist">
+  <div class="input-row">
+    <input type="text" id="movie-input" placeholder="Enter movie title..." autocomplete="off" aria-label="Movie title" />
+  </div>
+  <div class="input-row">
+    <input type="text" id="image-input" placeholder="Enter image URL (optional)" autocomplete="off" aria-label="Movie image URL" />
+  </div>
+  <button id="add-btn" aria-label="Add movie to watchlist">Add</button>
+</div>
+
+<div class="list-container" id="watchlist-container" >
+  <h2>To Watch</h2>
+  <ul id="watchlist"></ul>
+</div>
+
+<div class="list-container" id="watchedlist-container" >
+  <h2>Watched</h2>
+  <ul id="watchedlist"></ul>
+</div>
+
+<script>
+  // DOM elements
+  const movieInput = document.getElementById('movie-input');
+  const imageInput = document.getElementById('image-input');
+  const addBtn = document.getElementById('add-btn');
+  const watchlistUl = document.getElementById('watchlist');
+  const watchedlistUl = document.getElementById('watchedlist');
+
+  // Retrieve watchlists from localStorage, stored as arrays of objects { title, imageUrl }
+  let watchlist = JSON.parse(localStorage.getItem('watchlist')) || [];
+  let watchedlist = JSON.parse(localStorage.getItem('watchedlist')) || [];
+
+  // Save lists to localStorage
+  function saveLists() {
+    localStorage.setItem('watchlist', JSON.stringify(watchlist));
+    localStorage.setItem('watchedlist', JSON.stringify(watchedlist));
+  }
+
+  // Helper function to validate if a string looks like an URL (basic)
+  function looksLikeUrl(str) {
+    return /^https?:\/\/.+/.test(str);
+  }
+
+  // Render list items
+  function render() {
+    // Clear existing lists
+    watchlistUl.innerHTML = '';
+    watchedlistUl.innerHTML = '';
+
+    // Render To Watch List
+    if (watchlist.length === 0) {
+      const emptyMsg = document.createElement('li');
+      emptyMsg.textContent = "Your watchlist is empty.";
+      emptyMsg.style.fontStyle = "italic";
+      emptyMsg.style.color = "#777";
+      watchlistUl.appendChild(emptyMsg);
+    } else {
+      watchlist.forEach((movie, idx) => {
+        const li = createMovieListItem(movie, idx, false);
+        watchlistUl.appendChild(li);
+      });
+    }
+
+    // Render Watched List
+    if (watchedlist.length === 0) {
+      const emptyMsg = document.createElement('li');
+      emptyMsg.textContent = "You haven't watched any movies yet.";
+      emptyMsg.style.fontStyle = "italic";
+      emptyMsg.style.color = "#777";
+      watchedlistUl.appendChild(emptyMsg);
+    } else {
+      watchedlist.forEach((movie, idx) => {
+        const li = createMovieListItem(movie, idx, true);
+        watchedlistUl.appendChild(li);
+      });
+    }
+  }
+
+  // Create list item element for movie {title, imageUrl}
+  function createMovieListItem(movie, index, watched) {
+    const li = document.createElement('li');
+
+    const infoDiv = document.createElement('div');
+    infoDiv.className = 'movie-info';
+
+    const img = document.createElement('img');
+    img.className = 'movie-image';
+    if (movie.imageUrl && looksLikeUrl(movie.imageUrl)) {
+      img.src = movie.imageUrl;
+      img.alt = `${movie.title} poster`;
+      img.onerror = () => {
+        img.src = 'https://via.placeholder.com/60x80?text=No+Image';
+      };
+    } else {
+      img.src = 'https://via.placeholder.com/60x80?text=No+Image';
+      img.alt = 'No image available';
+    }
+    infoDiv.appendChild(img);
+
+    const verticalInfoDiv = document.createElement('div');
+    verticalInfoDiv.className = 'vertical-info';
+
+    const titleSpan = document.createElement('span');
+    titleSpan.textContent = movie.title;
+    titleSpan.className = 'movie-title';
+    if (watched) {
+      titleSpan.classList.add('watched');
+    }
+    verticalInfoDiv.appendChild(titleSpan);
+
+    const buttonRow = document.createElement('div');
+    buttonRow.className = 'button-row';
+
+    const btnWatch = document.createElement('button');
+    btnWatch.className = 'btn btn-watch';
+    btnWatch.textContent = watched ? 'Undo' : 'Watched';
+    btnWatch.title = watched ? 'Mark as to watch again' : 'Mark as watched';
+
+    btnWatch.addEventListener('click', () => {
+      if (watched) {
+        watchedlist.splice(index, 1);
+        watchlist.push(movie);
+      } else {
+        watchlist.splice(index, 1);
+        watchedlist.push(movie);
+      }
+      saveLists();
+      render();
+    });
+
+    const btnRemove = document.createElement('button');
+    btnRemove.className = 'btn btn-remove';
+    btnRemove.textContent = 'Remove';
+    btnRemove.title = 'Remove from list';
+
+    btnRemove.addEventListener('click', () => {
+      if (watched) {
+        watchedlist.splice(index, 1);
+      } else {
+        watchlist.splice(index, 1);
+      }
+      saveLists();
+      render();
+    });
+
+    buttonRow.appendChild(btnWatch);
+    buttonRow.appendChild(btnRemove);
+
+    verticalInfoDiv.appendChild(buttonRow);
+
+    infoDiv.appendChild(verticalInfoDiv);
+
+    li.appendChild(infoDiv);
+
+    li.style.flexDirection = 'row';
+    li.style.padding = '0.8rem 1.2rem';
+    li.style.fontSize = '1.25rem';
+    infoDiv.style.alignItems = 'center';
+
+    return li;
+  }
+
+  // Add new movie function
+  function addMovie() {
+    const newMovie = movieInput.value.trim();
+    const newImageUrl = imageInput.value.trim();
+
+    if (!newMovie) {
+      alert('Please enter a movie title.');
+      return;
+    }
+    const lowerNewMovie = newMovie.toLowerCase();
+    const isDuplicate = watchlist.some(m => m.title.toLowerCase() === lowerNewMovie) ||
+                        watchedlist.some(m => m.title.toLowerCase() === lowerNewMovie);
+    if (isDuplicate) {
+      alert('This movie is already in your watchlist or watched list.');
+      movieInput.value = '';
+      imageInput.value = '';
+      return;
+    }
+    if (newImageUrl && !looksLikeUrl(newImageUrl)) {
+      alert('Please enter a valid image URL or leave it empty.');
+      return;
+    }
+    const movieObj = { title: newMovie, imageUrl: newImageUrl };
+    watchlist.push(movieObj);
+    saveLists();
+    render();
+    movieInput.value = '';
+    imageInput.value = '';
+    movieInput.focus();
+  }
+
+  addBtn.addEventListener('click', addMovie);
+  movieInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && document.activeElement !== imageInput) {
+      addMovie();
+    }
+  });
+  imageInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      addMovie();
+    }
+  });
+
+  render();
+</script>
+</body>
+</html>
