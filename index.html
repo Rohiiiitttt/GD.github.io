@@ -7,10 +7,12 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <!-- Font Awesome for social icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
 </head>
 <body>
   <div class="container">
-    <header>M W & I R</header>
+    <header>WatchList</header>
     <div class="subtitle">Add movies or Instagram Reels to keep track easily!</div>
 
     <!-- Movie Input Section -->
@@ -21,7 +23,7 @@
       <div class="input-row">
         <input type="text" id="movie-url-input" placeholder="Enter movie URL..." autocomplete="off" aria-label="Movie URL" />
       </div>
-      <button id="add-btn" aria-label="Add movie to watchlist">Add Movie</button>
+      <button id="add-movie-btn" aria-label="Add movie to watchlist">Add Movie</button>
     </div>
 
     <!-- Reels Input Section -->
@@ -38,11 +40,7 @@
       <ul id="watchlist"></ul>
     </div>
 
-    <!-- Watched Section -->
-    <div class="list-container" id="watchedlist-container">
-      <h2>Watched</h2>
-      <ul id="watchedlist"></ul>
-    </div>
+   
 
     <!-- Reels Section -->
     <div class="list-container" id="reels-container">
@@ -50,183 +48,16 @@
       <ul id="reels-list"></ul>
     </div>
   </div>
-
-  <script>
-    // Movie Watchlist Variables
-    const movieInput = document.getElementById('movie-input');
-    const movieUrlInput = document.getElementById('movie-url-input');
-    const addBtn = document.getElementById('add-btn');
-    const watchlist = document.getElementById('watchlist');
-    const watchedlist = document.getElementById('watchedlist');
-
-    // Reels Variables
-    const reelInput = document.getElementById('reel-input');
-    const addReelBtn = document.getElementById('add-reel-btn');
-    const reelsList = document.getElementById('reels-list');
-
-    // LocalStorage Initialization
-    let movies = Array.isArray(JSON.parse(localStorage.getItem('movies'))) ? JSON.parse(localStorage.getItem('movies')) : [];
-    let watched = Array.isArray(JSON.parse(localStorage.getItem('watched'))) ? JSON.parse(localStorage.getItem('watched')) : [];
-    let reels = Array.isArray(JSON.parse(localStorage.getItem('reels'))) ? JSON.parse(localStorage.getItem('reels')) : [];
-
-    // Save Data to LocalStorage
-    function saveMovies() {
-      localStorage.setItem('movies', JSON.stringify(movies));
-    }
-
-    function saveWatched() {
-      localStorage.setItem('watched', JSON.stringify(watched));
-    }
-
-    function saveReels() {
-      localStorage.setItem('reels', JSON.stringify(reels));
-    }
-
-    // Render Watchlist
-    function renderWatchlist() {
-      watchlist.innerHTML = '';
-      movies.forEach((movie, idx) => {
-        const li = document.createElement('li');
-        li.className = 'movie-item';
-
-        const title = document.createElement('span');
-        title.textContent = movie.title;
-
-        const link = document.createElement('a');
-        link.href = movie.url;
-        link.target = '_blank';
-        link.textContent = 'Watch Now';
-        link.className = 'movie-link';
-
-        const watchBtn = document.createElement('button');
-        watchBtn.textContent = 'Watched';
-        watchBtn.className = 'btn btn-watch';
-        watchBtn.addEventListener('click', () => {
-          watched.push(movie);
-          movies.splice(idx, 1);
-          saveMovies();
-          saveWatched();
-          renderWatchlist();
-          renderWatched();
-        });
-        // Render Reels
-         function renderReels() {
-      reelsList.innerHTML = '';
-
-      if (reels.length === 0) {
-        const emptyMsg = document.createElement('li');
-        emptyMsg.textContent = "No Instagram Reels saved.";
-        emptyMsg.style.fontStyle = "italic";
-        emptyMsg.style.color = "#777";
-        reelsList.appendChild(emptyMsg);
-      } else {
-        reels.forEach((reel, idx) => {
-          const li = document.createElement('li');
-          li.className = 'reel-item';
-
-          const link = document.createElement('a');
-          link.href = reel;
-          link.target = '_blank';
-          link.textContent = `Reel ${idx + 1}`;
-          link.className = 'reel-link';
-
-          const removeBtn = document.createElement('button');
-          removeBtn.textContent = 'Remove';
-          removeBtn.className = 'btn btn-remove';
-          removeBtn.addEventListener('click', () => {
-            reels.splice(idx, 1);
-            saveReels();
-            renderReels();
-          });
-
-
-        const removeBtn = document.createElement('button');
-        removeBtn.textContent = 'Remove';
-        removeBtn.className = 'btn btn-remove';
-        removeBtn.addEventListener('click', () => {
-          movies.splice(idx, 1);
-          saveMovies();
-          renderWatchlist();
-        });
-
-        li.appendChild(title);
-        li.appendChild(link);
-        li.appendChild(watchBtn);
-        li.appendChild(removeBtn);
-        watchlist.appendChild(li);
-      });
-    }
-
-    // Render Watched List
-    function renderWatched() {
-      watchedlist.innerHTML = '';
-      watched.forEach((movie, idx) => {
-        const li = document.createElement('li');
-        li.className = 'movie-item';
-
-        const title = document.createElement('span');
-        title.textContent = movie.title;
-
-        const link = document.createElement('a');
-        link.href = movie.url;
-        link.target = '_blank';
-        link.textContent = 'Watch Again';
-        link.className = 'movie-link';
-
-        const removeBtn = document.createElement('button');
-        removeBtn.textContent = 'Remove';
-        removeBtn.className = 'btn btn-remove';
-        removeBtn.addEventListener('click', () => {
-          watched.splice(idx, 1);
-          saveWatched();
-          renderWatched();
-        });
-
-        li.appendChild(title);
-        li.appendChild(link);
-        li.appendChild(removeBtn);
-        watchedlist.appendChild(li);
-      });
-    }
-
-    // Add Movie
-    function addMovie() {
-      const title = movieInput.value.trim();
-      const url = movieUrlInput.value.trim();
-
-      if (!title) {
-        alert('Please enter a movie title.');
-        return;
-      }
-
-      if (!url || !/^https?:\/\/.+/.test(url)) {
-        alert('Please enter a valid movie URL.');
-        return;
-      }
-
-      if (movies.some(movie => movie.title.toLowerCase() === title.toLowerCase())) {
-        alert('This movie is already in the watchlist.');
-        return;
-      }
-
-      movies.push({ title, url });
-      saveMovies();
-      renderWatchlist();
-      movieInput.value = '';
-      movieUrlInput.value = '';
-    }
-
-    addBtn.addEventListener('click', addMovie);
-    movieInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        addMovie();
-      }
-    });
-
-    // Initial Render
-    renderWatchlist();
-    renderWatched();
-    renderReels();
-  </script>
+  <footer>
+    <div class="footer-links">
+      <a href="https://www.linkedin.com/in/your-linkedin" target="_blank" aria-label="LinkedIn">
+       <i class="fab fa-linkedin" style="font-size:24px;vertical-align:middle;"></i> 
+      </a>
+      <a href="https://github.com/your-github" target="_blank" aria-label="GitHub">
+       <i class="fab fa-github" style="font-size:24px;vertical-align:middle;"></i>
+      </a>
+    </div>
+  </footer>
+   <script src="script.js"></script>
 </body>
 </html>
