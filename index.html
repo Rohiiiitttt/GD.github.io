@@ -2,62 +2,70 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Movie Watchlist & Instagram Reels</title>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WatchList</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght @300;400;600;700&family=Poppins:wght @600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
-  <!-- Font Awesome for social icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
 </head>
 <body>
-  <div class="container">
-    <header>WatchList</header>
-    <div class="subtitle">Add movies or Instagram Reels to keep track easily!</div>
+  <nav class="top-nav">
+    <div class="nav-left">
+      <a class="logo" href="index.html">WatchList</a>
+    </div>
+    <div class="nav-center">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="watch.html" class="nav-link">Watch</a>
+      <a href="about.html" class="nav-link">About</a>
+    </div>
+    <div class="nav-right">
+      <button id="theme-toggle" aria-label="Toggle dark mode"><i class="fas fa-moon"></i></button>
+    </div>
+  </nav>
 
-    <!-- Movie Input Section -->
-    <div class="input-section" aria-label="Add movie to watchlist">
-      <div class="input-row">
-        <input type="text" id="movie-input" placeholder="Enter movie title..." autocomplete="off" aria-label="Movie title" />
+  <main class="container">
+    <section class="hero">
+      <h1 class="fade-in">Welcome to WatchList</h1>
+      <p class="hero-subtitle">Organize your favorite movies, comedy clips, songs, and more in one place.</p>
+      <p>Add titles and URLs with just a click—no fuss, no sign-up.</p>
+      <div class="cta-buttons">
+        <a href="watch.html" class="cta-button">Go to Watch</a>
+        <a href="about.html" class="cta-button secondary">Learn More</a>
       </div>
-      <div class="input-row">
-        <input type="text" id="movie-url-input" placeholder="Enter movie URL..." autocomplete="off" aria-label="Movie URL" />
+    </section>
+
+    <section class="intro-section">
+      <h2>What is WatchList?</h2>
+      <p>WatchList is your go-to app for curating entertainment. Keep track of what you've watched, want to watch, or share with friends.</p>
+    </section>
+
+    <section class="features-section">
+      <h2>Features</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <i class="fas fa-list"></i>
+          <h3>Categorized Lists</h3>
+          <p>Organize into Movies, Comedy, Songs, and custom categories.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-plus"></i>
+          <h3>Easy Adding</h3>
+          <p>Add titles and URLs with just a click—no fuss, no sign-up.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-mobile-alt"></i>
+          <h3>Responsive Design</h3>
+          <p>Enjoy a seamless experience on any device, anywhere.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-trash-alt"></i>
+          <h3>Easy Management</h3>
+          <p>Delete or archive items to keep your lists fresh and organized.</p>
+        </div>
       </div>
-      <button id="add-movie-btn" aria-label="Add movie to watchlist">Add Movie</button>
-    </div>
+    </section>
+  </main>
 
-    <!-- Reels Input Section -->
-    <div class="input-section" aria-label="Add Instagram Reel">
-      <div class="input-row">
-        <input type="text" id="reel-input" placeholder="Enter Instagram Reel URL..." autocomplete="off" aria-label="Reel URL" />
-      </div>
-      <button id="add-reel-btn" aria-label="Add Instagram Reel">Add Reel</button>
-    </div>
-
-    <!-- Watchlist Section -->
-    <div class="list-container" id="watchlist-container">
-      <h2>To Watch</h2>
-      <ul id="watchlist"></ul>
-    </div>
-
-   
-
-    <!-- Reels Section -->
-    <div class="list-container" id="reels-container">
-      <h2>Instagram Reels</h2>
-      <ul id="reels-list"></ul>
-    </div>
-  </div>
-  <footer>
-    <div class="footer-links">
-      <a href="https://www.linkedin.com/in/your-linkedin" target="_blank" aria-label="LinkedIn">
-       <i class="fab fa-linkedin" style="font-size:24px;vertical-align:middle;"></i> 
-      </a>
-      <a href="https://github.com/your-github" target="_blank" aria-label="GitHub">
-       <i class="fab fa-github" style="font-size:24px;vertical-align:middle;"></i>
-      </a>
-    </div>
-  </footer>
-   <script src="script.js"></script>
+  <script src="scripts.js"></script>
 </body>
 </html>
